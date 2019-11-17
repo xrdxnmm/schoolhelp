@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.example.dao.UserMapper">
+
+	<!-- 添加客户 -->
+	<insert id="addUser" parameterType="com.example.domain.User">
+		INSERT INTO school.user (uName, uPassword, name, academy,major,grade,tel)
+		VALUES( #{uName}, #{uPassword}, #{name}, #{academy},#{major},#{grade},#{tel})
+	</insert>
+
+	<select id="queryUser" parameterType="string" resultType="com.example.domain.User">
+		SELECT *
+		FROM school.user
+		WHERE uName = #{uName}
+	</select>
+	
+	
+   <select id="login" parameterType="com.example.domain.User" resultType="com.example.domain.User">
+      select *
+      from school.user 
+      where uName = #{uName} 
+      and uPassword = #{uPassword}  
+   </select>
+	
+</mapper>

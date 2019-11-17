@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.MissionMapper">
+
+	<!-- 添加订单 -->
+	<insert id="addMission" parameterType="com.example.domain.Mission">
+		INSERT INTO school.mission
+			(
+				uName,
+				missionTitle,
+				missionType,
+				missionDetail,
+				count
+			)
+		VALUES
+			(
+				#{uName},
+				#{missionTitle},
+				#{missionType},
+				#{missionDetail},
+				#{count}
+			)		
+	</insert>
+
+	<select id="querySelf" resultType="com.example.domain.Mission">
+		SELECT *
+	    FROM school.mission
+	    WHERE uName = #{uName}
+	    AND missionStatus=#{missionStatus}
+	    LIMIT #{starRow},#{pageSize}
+	</select>
+	
+	<select id="querySelfNOrYReceive"  resultType="com.example.domain.Mission">
+		SELECT *
+	    FROM school.receive,school.mission
+	    WHERE receive.uName = #{uName}
+	    AND receive.receiveMissionStatus = #{receiveMissionStatus}
+	    AND mission.missionNo=receive.missionNo
+		LIMIT #{starRow},#{pageSize}
+	</select>
+	
+	<select id="query" resultType="com.example.domain.Mission">
+		SELECT *
+	    FROM school.mission
+	    WHERE missionNo=#{missionNo}
+	</select>
+	
+	<!-- 已修改 -->
+	<select id="queryType" resultType="com.example.domain.Mission" >
+		SELECT *
+        FROM mission
+		WHERE count >
+       	(
+			SELECT count(receive.missionNo)
+            FROM receive
+            WHERE receive.missionNo = mission.missionNo
+       	)
+        <if test="missionType != '全部'.toString()">
+      		AND missionType = #{missionType}
+      	</if>
+      	<if test="word!=null or word!=''">
+      		AND (
+      			missionTitle LIKE CONCAT(CONCAT('%',#{word}),'%')
+      			OR
+      			missionDetail LIKE CONCAT(CONCAT('%',#{word}),'%')
+      		)     	
+      	</if>
+		LIMIT #{starRow},#{pageSize}
+	</select>
+	
+	
+	<!-- 已修改 -->
+	<update id="receiveMission" parameterType="com.example.domain.Mission">
+		UPDATE school.mission
+		SET mission.missionStatus = '已被接取'
+		WHERE missionNo = #{missionNo}
+	
+	</update>
+	<!-- 已修改 -->
+	<select id="count" parameterType="com.example.domain.Mission" resultType="int">
+		SELECT count
+		from mission
+		WHERE missionNo = #{missionNo}
+	</select>
+	<select id="countExist" parameterType="com.example.domain.Mission" resultType="int">
+		SELECT count(*)
+		from mission
+		WHERE missionNo = #{missionNo}
+		AND uName=#{uName}
+	</select>
+	
+	<!-- 已修改 -->
+	<select id="countReceive" parameterType="com.example.domain.Mission" resultType="int">
+		SELECT count(missionNo)
+		FROM school.receive
+		WHERE missionNo = #{missionNo}
+	</select>
+	<!-- 已修改 -->
+	<insert id="addReceive" parameterType="com.example.domain.Mission">
+		INSERT INTO school.receive(missionNo,uName)
+		VALUES (#{missionNo},#{uName})
+	</insert>
+	<!-- 已修改 -->
+	<select id="countID" parameterType="com.example.domain.Mission" resultType="int">
+		SELECT count(*)
+		FROM receive
+		WHERE uName=#{uName}
+		AND missionNo=#{missionNo}
+	</select>
+	
+	<!-- 已修改 -->
+	<update id="completeMission" parameterType="com.example.domain.Mission">
+		UPDATE school.mission
+		SET missionStatus = '已被完成'
+		WHERE missionNo = #{missionNo}
+	</update>
+	<update id="completeReceive" parameterType="com.example.domain.Mission">
+		UPDATE school.receive
+		SET receiveMissionStatus='已完成'
+		WHERE missionNo=#{missionNo}
+		AND uName=#{uName}
+	</update>
+	<!-- 已修改 -->
+	<select id="countComplete" resultType="int">
+		SELECT count(*)
+		FROM receive
+		WHERE missionNo=#{missionNo}
+		AND receiveMissionStatus='已完成'
+	</select>
+	
+	
+	<select id="titleKeyWord" resultType="com.example.domain.Mission">
+		SELECT *
+		FROM mission
+		WHERE missionType=#{missionType}
+		AND missionTitle LIKE CONCAT(CONCAT('%',#{missionTitle}),'%')
+		AND missionStatus='未被接取'
+		LIMIT #{starRow},#{pageSize}
+	</select>
+	<select id="detailKeyWord" resultType="com.example.domain.Mission">
+		SELECT *
+		FROM mission
+		WHERE missionType=#{missionType}
+		AND missionDetail LIKE CONCAT(CONCAT('%',#{missionDetail}),'%')
+		AND missionStatus='未被接取'
+		LIMIT #{starRow},#{pageSize} 
+	</select>
+	
+	<update id="missionProfile" parameterType="int">
+		UPDATE school.mission
+		SET missionStatus='任务结束'
+		WHERE missionNo=#{missionNo}
+		AND missionStatus='已被完成'
+	</update>
+	<update id="receiveProfile" parameterType="int">
+		UPDATE school.receive
+		SET receiveMissionStatus='已被确认'
+		WHERE missionNo=#{missionNo}
+	</update>
+	<select id="countMission" resultType="int">
+		SELECT COUNT(*)
+		FROM mission
+		WHERE count >
+       	(
+			SELECT count(receive.missionNo)
+            FROM receive
+            WHERE receive.missionNo = mission.missionNo
+       	)
+        <if test="missionType != '全部'.toString()">
+      		AND missionType = #{missionType}
+      	</if>
+      	<if test="word!=null or word!=''">
+      		AND (
+      			missionTitle LIKE CONCAT(CONCAT('%',#{word}),'%')
+      			OR
+      			missionDetail LIKE CONCAT(CONCAT('%',#{word}),'%')
+      		)     	
+      	</if>
+	</select>
+	
+	<select id="countMissionStatus" resultType="int">
+		SELECT COUNT(*)
+		FROM mission
+		WHERE missionStatus=#{missionStatus}
+	</select>
+	
+	<insert id="addPic" parameterType="com.example.domain.Picture">
+		INSERT INTO picture(missionNo,pic)
+		VALUES (#{missionNo},#{picPath})
+	</insert>
+	<select id="queryPic" resultType="com.example.domain.Picture">
+		SELECT *
+		FROM school.pic
+		WHERE missionNo=#{missionNo}
+	</select>
+	
+	<delete id="deleteMission">
+		DELETE 
+		FROM school.mission 
+		WHERE missionNo = #{missionNo}
+		AND missionStatus = '未被接取'
+	</delete>
+	<delete id="deletePicture">
+		DELETE 
+		FROM school.pictures 
+		WHERE missionNo = #{missionNo}
+	</delete>
+</mapper>
