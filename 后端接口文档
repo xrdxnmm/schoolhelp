@@ -1,0 +1,305 @@
+模块1 登陆(例如：活动模块)
+接口1 登录接口
+1. 接口描述
+这里描述接口的具体功能
+请求方式	GET
+请求url	http://localhost:8081/schoolhelp/userController/login.do
+具体功能	获取账号密码
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+uName	是	用户名	
+uPassword	是	密码	
+
+3. 返回结构
+
+"user": {
+"uName": "201710098000"  
+“name”：“莲藕”  
+}
+
+接口2 注册接口
+1. 接口描述
+这里描述接口的具体功能
+请求方式	GET
+请求url	http://localhost:8081/schoolhelp/userController/addUser.do
+具体功能	接受用户基本信息
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+uName	是	学号	
+uPssword	是	密码	
+academy	是	学院	
+major	是	专业	
+grade	是	班级	
+name	是	姓名	
+tel	是	电话号码	
+
+3. 返回结构
+
+{
+  "status": “200”,
+  "message": "success",
+}
+
+接口3 获取用户信息
+1. 接口描述
+这里描述接口的具体功能
+请求方式	GET
+请求url	http://localhost:8081/schoolhelp/userController/queryUser.do
+具体功能	获取用户基本信息
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+uName	是	学号	
+
+3. 返回结构
+"user": {
+"uName": "201710098000"，
+“name”：“刘备”，
+“academy”：“计算机专业”，
+“major”：“软件工程”
+“grade”：“3班”
+“tel”：“15816100000”
+}
+
+模块2 任务
+接口1 分页根据类型查询任务
+1. 接口描述
+根据类型查询任务以及关键字搜索
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/queryType.do
+具体功能	分页获取各种类型的任务信息以及关键字搜索
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+pageNo	否	页码，默认1	
+missionType	否	任务类型，默认全部	全部/组团/寻物/闲置/跑腿/资源共享
+Word	否	关键字	
+
+3. 返回结构
+
+{
+ "data": {
+“pageBean”：[{
+“mission”:[{
+“missionNo”：1
+“missionTitle”:急急急！
+“uName”:“201710098000”
+“missionType”：“寻物”
+“missionDetail”：“在三饭丢了饭卡，捡到请联系我：xxx”
+}]
+“totalCount（总任务数）”:”1000”
+“totalPage（总页数）”:100
+}
+]
+}
+接口2 接取任务
+1. 接口描述
+接取任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/receiveMission.do
+具体功能	判断该任务人数是否足够，该用户是否接过该任务，是则接取任务
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+missionNo	是	任务号	
+uName	是	接取者（用户名）	
+
+3. 返回结构
+成功
+{
+  "data": {
+	“message”：“success”
+	“status”：“200”
+	}
+}
+失败
+{
+  "data": {
+	“message”：“faile”
+	“status”：“201”
+	}
+}
+接口3 查询个人发布的任务
+1. 接口描述
+查询个人发布的任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/ querySelf.do
+具体功能	查询个人发布未被接取的任务/查询个人发布已被接取的任务/查询个人发布已被完成的任务
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+pageNo	否	页码	
+uName	是	发布者（用户名）	
+missionStatus	是	发布者所能看到的任务状态	未被接取/已被接取/已被完成/结束任务
+
+3. 返回结构
+{
+ "data": {
+“pageBean”：[{
+“mission”:[{
+“missionNo”：1
+“missionTitle”:急急急！
+“uName”:“201710098000”
+“missionType”：“寻物”
+“missionDetail”：“在三饭丢了饭卡，捡到请联系我：xxx”
+}]
+“totalCount（总任务数）”:”1000”
+“totalPage（总页数）”:100
+}
+]
+}
+接口4 查询个人接取的任务
+1. 接口描述
+查询个人接取的任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/ querySelfNOrYReceive.do
+具体功能	查询个人已接取的任务/查询个人已完成的任务/查询个人已被确认的任务
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+pageNo	否，默认1	页码	
+uName	是	接取者（用户名）	
+missionStatus	是	接取者所能看到的任务状态	已接取/已完成/已被确认
+
+3. 返回结构
+{
+ “pageBean”：{
+“mission”:[{
+“missionNo”：1
+“missionTitle”:急急急！
+“uName”:“201710098000”
+“missionType”：“寻物”
+“missionDetail”：“在三饭丢了饭卡，捡到请联系我：xxx”
+}]
+“totalCount（总任务数）”:”1000”
+“totalPage（总页数）”:100
+}
+
+接口5完成任务
+1. 接口描述
+查询个人接取的任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/ completeMission.do
+具体功能	修改接取者任务状态，并判断该任务完成人数是否足够，是则修改发布者状态已被完成
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+uName	是	接取者（用户名）	
+missionNo	是	任务号	
+
+3. 返回结构
+成功
+{
+  "data": {
+	“message”：“success”
+	“status”：“200”
+	}
+}
+失败
+{
+  "data": {
+	“message”：“faile”
+	“status”：“201”
+	}
+}
+
+接口6结束任务
+1. 接口描述
+发布者在任务状态在已被完成的前提下结束任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/ missionProfile.do
+具体功能	发布者确认任务已完成，状态改为任务结束
+接取者任务状态改为已被确认
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+missionNo	是	任务号	
+
+3. 返回结构
+成功
+{
+  "data": {
+	“message”：“success”
+	“status”：“200”
+	}
+}
+失败
+{
+  "data": {
+	“message”：“faile”
+	“status”：“201”
+	}
+}
+接口7删除任务
+1. 接口描述
+删除任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/deleteMission.do
+具体功能	删除未被接取的任务，包括图片和其他信息
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+missionNo	是	任务号	
+
+3. 返回结构
+成功
+{
+  "data": {
+	“message”：“success”
+	“status”：“200”
+	}
+}
+}
+失败
+{
+  "data": {
+	“message”：“faile”
+	“status”：“201”
+	}
+}
+
+接口8 发布任务
+1. 接口描述
+发布任务
+请求方式	Get
+请求url	http://localhost:8081/schoolhelp/missionController/addMission.do
+具体功能	删除未被接取的任务，包括图片和其他信息
+
+2. 参数说明
+
+参数名	是否必传	参数描述	枚举值列表
+uName	是	学号	
+missionTitle	是	任务标题	
+missionDetail	是	任务详情	
+missionType	是	任务类型	寻物/组团/跑腿/闲置/资源共享/其他
+count	否	任务人数	
+
+3. 返回结构
+成功
+{
+  "data": {
+	“message”：“success”
+	“status”：“200”
+	}
+}
+}
+失败
+{
+  "data": {
+	“message”：“faile”
+	“status”：“201”
+	}
+}
+
